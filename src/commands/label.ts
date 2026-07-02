@@ -1,8 +1,8 @@
-import { encode } from '@toon-format/toon';
-import type { RepoContext } from '../context.js';
-import { glabJson, glabExec } from '../glab.js';
-import { AxiError } from '../errors.js';
-import { getFlag } from '../args.js';
+import { encode } from "@toon-format/toon";
+import type { RepoContext } from "../context.js";
+import { glabJson, glabExec } from "../glab.js";
+import { AxiError } from "../errors.js";
+import { getFlag } from "../args.js";
 import {
   field,
   renderList,
@@ -10,9 +10,9 @@ import {
   renderOutput,
   renderError,
   type FieldDef,
-} from '../toon.js';
-import { formatCountLine } from '../format.js';
-import { getSuggestions } from '../suggestions.js';
+} from "../toon.js";
+import { formatCountLine } from "../format.js";
+import { getSuggestions } from "../suggestions.js";
 
 export const LABEL_HELP = `usage: glab-axi label <subcommand> [flags]
 subcommands[4]:
@@ -28,109 +28,136 @@ examples:
   glab-axi label create --name "priority:high" --color ff0000 --description "High priority"
   glab-axi label delete "priority:low"`;
 
-const listSchema: FieldDef[] = [
-  field('name'),
-];
+const listSchema: FieldDef[] = [field("name")];
 
 async function listLabels(args: string[], ctx?: RepoContext): Promise<string> {
-  const perPage = getFlag(args, '--per-page') ?? '50';
-  const ghArgs = [
-    'label', 'list',
-    '--json', 'name',
-    '--per-page', perPage,
-  ];
+  const perPage = getFlag(args, "--per-page") ?? "50";
+  const ghArgs = ["label", "list", "--json", "name", "--per-page", perPage];
 
   const labels = await glabJson<Record<string, unknown>[]>(ghArgs, ctx);
   const isEmpty = labels.length === 0;
   const limitNum = Number(perPage);
   const countLine = formatCountLine({ count: labels.length, limit: limitNum });
 
-  const suggestions = getSuggestions({ domain: 'label', action: 'list', isEmpty, repo: ctx });
+  const suggestions = getSuggestions({
+    domain: "label",
+    action: "list",
+    isEmpty,
+    repo: ctx,
+  });
   return renderOutput([
     countLine,
-    renderList('labels', labels, listSchema),
+    renderList("labels", labels, listSchema),
     renderHelp(suggestions),
   ]);
 }
 
 async function createLabel(args: string[], ctx?: RepoContext): Promise<string> {
-  const name = getFlag(args, '--name');
-  if (!name) throw new AxiError('--name is required: glab-axi label create --name "..." --color "..."', 'VALIDATION_ERROR');
-  const color = getFlag(args, '--color');
-  if (!color) throw new AxiError('--color is required: glab-axi label create --name "..." --color "..."', 'VALIDATION_ERROR');
+  const name = getFlag(args, "--name");
+  if (!name)
+    throw new AxiError(
+      '--name is required: glab-axi label create --name "..." --color "..."',
+      "VALIDATION_ERROR",
+    );
+  const color = getFlag(args, "--color");
+  if (!color)
+    throw new AxiError(
+      '--color is required: glab-axi label create --name "..." --color "..."',
+      "VALIDATION_ERROR",
+    );
 
   const existing = await glabJson<Record<string, unknown>[]>(
-    ['label', 'list', '--json', 'name'],
+    ["label", "list", "--json", "name"],
     ctx,
   );
-  const found = existing.find((l) => typeof l.name === 'string' && l.name.toLowerCase() === name.toLowerCase());
+  const found = existing.find(
+    (l) =>
+      typeof l.name === "string" && l.name.toLowerCase() === name.toLowerCase(),
+  );
   if (found) {
     return renderOutput([
-      encode({ create: 'already_exists', label: found.name }),
-      renderHelp(getSuggestions({ domain: 'label', action: 'create', repo: ctx })),
+      encode({ create: "already_exists", label: found.name }),
+      renderHelp(
+        getSuggestions({ domain: "label", action: "create", repo: ctx }),
+      ),
     ]);
   }
 
-  const ghArgs = ['label', 'create', name, '--color', color];
-  const description = getFlag(args, '--description');
-  if (description) ghArgs.push('--description', description);
+  const ghArgs = ["label", "create", name, "--color", color];
+  const description = getFlag(args, "--description");
+  if (description) ghArgs.push("--description", description);
 
   await glabExec(ghArgs, ctx);
   return renderOutput([
-    encode({ created: 'ok', label: name }),
-    renderHelp(getSuggestions({ domain: 'label', action: 'create', repo: ctx })),
+    encode({ created: "ok", label: name }),
+    renderHelp(
+      getSuggestions({ domain: "label", action: "create", repo: ctx }),
+    ),
   ]);
 }
 
 async function editLabel(args: string[], ctx?: RepoContext): Promise<string> {
-  const positionals = args.filter((a) => !a.startsWith('--'));
+  const positionals = args.filter((a) => !a.startsWith("--"));
   const labelName = positionals[1];
-  if (!labelName) throw new AxiError('Label name is required: glab-axi label edit <name>', 'VALIDATION_ERROR');
+  if (!labelName)
+    throw new AxiError(
+      "Label name is required: glab-axi label edit <name>",
+      "VALIDATION_ERROR",
+    );
 
-  const ghArgs = ['label', 'edit', labelName];
-  const newName = getFlag(args, '--name');
-  if (newName) ghArgs.push('--name', newName);
-  const color = getFlag(args, '--color');
-  if (color) ghArgs.push('--color', color);
-  const description = getFlag(args, '--description');
-  if (description) ghArgs.push('--description', description);
+  const ghArgs = ["label", "edit", labelName];
+  const newName = getFlag(args, "--name");
+  if (newName) ghArgs.push("--name", newName);
+  const color = getFlag(args, "--color");
+  if (color) ghArgs.push("--color", color);
+  const description = getFlag(args, "--description");
+  if (description) ghArgs.push("--description", description);
 
   await glabExec(ghArgs, ctx);
   return renderOutput([
-    encode({ edit: 'ok', label: newName ?? labelName }),
-    renderHelp(getSuggestions({ domain: 'label', action: 'edit', repo: ctx })),
+    encode({ edit: "ok", label: newName ?? labelName }),
+    renderHelp(getSuggestions({ domain: "label", action: "edit", repo: ctx })),
   ]);
 }
 
 async function deleteLabel(args: string[], ctx?: RepoContext): Promise<string> {
-  const positionals = args.filter((a) => !a.startsWith('--'));
+  const positionals = args.filter((a) => !a.startsWith("--"));
   const name = positionals[1];
-  if (!name) throw new AxiError('Label name is required: glab-axi label delete <name>', 'VALIDATION_ERROR');
+  if (!name)
+    throw new AxiError(
+      "Label name is required: glab-axi label delete <name>",
+      "VALIDATION_ERROR",
+    );
 
-  await glabExec(['label', 'delete', name, '--yes'], ctx);
+  await glabExec(["label", "delete", name, "--yes"], ctx);
   return renderOutput([
-    encode({ delete: 'ok', label: name }),
-    renderHelp(getSuggestions({ domain: 'label', action: 'delete', repo: ctx })),
+    encode({ delete: "ok", label: name }),
+    renderHelp(
+      getSuggestions({ domain: "label", action: "delete", repo: ctx }),
+    ),
   ]);
 }
 
-export async function labelCommand(args: string[], ctx?: RepoContext): Promise<string> {
+export async function labelCommand(
+  args: string[],
+  ctx?: RepoContext,
+): Promise<string> {
   const sub = args[0];
 
-  if (sub === '--help' || sub === undefined) return LABEL_HELP;
+  if (sub === "--help" || sub === undefined) return LABEL_HELP;
 
   switch (sub) {
-    case 'list':
+    case "list":
       return listLabels(args, ctx);
-    case 'create':
+    case "create":
       return createLabel(args, ctx);
-    case 'edit':
+    case "edit":
       return editLabel(args, ctx);
-    case 'delete':
+    case "delete":
       return deleteLabel(args, ctx);
     default:
-      return renderError(`Unknown subcommand: ${sub}`, 'VALIDATION_ERROR', [
-        'Available subcommands: list, create, edit, delete',
+      return renderError(`Unknown subcommand: ${sub}`, "VALIDATION_ERROR", [
+        "Available subcommands: list, create, edit, delete",
       ]);
   }
 }

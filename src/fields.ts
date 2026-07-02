@@ -1,5 +1,5 @@
-import { AxiError } from './errors.js';
-import type { FieldDef } from './toon.js';
+import { AxiError } from "./errors.js";
+import type { FieldDef } from "./toon.js";
 
 export interface ExtraFieldSpec {
   jsonKey: string;
@@ -19,16 +19,21 @@ export function parseFields(
     return { extraDefs: [], extraJsonKeys: [] };
   }
 
-  const requested = [...new Set(
-    fieldsArg.split(',').map((f) => f.trim()).filter(Boolean),
-  )];
+  const requested = [
+    ...new Set(
+      fieldsArg
+        .split(",")
+        .map((f) => f.trim())
+        .filter(Boolean),
+    ),
+  ];
 
   const unknown = requested.filter((f) => !(f in available));
   if (unknown.length > 0) {
-    const availableNames = Object.keys(available).sort().join(', ');
+    const availableNames = Object.keys(available).sort().join(", ");
     throw new AxiError(
-      `Unknown field(s): ${unknown.join(', ')}. Available: ${availableNames}`,
-      'VALIDATION_ERROR',
+      `Unknown field(s): ${unknown.join(", ")}. Available: ${availableNames}`,
+      "VALIDATION_ERROR",
     );
   }
 

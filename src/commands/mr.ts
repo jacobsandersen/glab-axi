@@ -11,7 +11,6 @@ import {
   field,
   pluck,
   lower,
-  boolYesNo,
   mapEnum,
   relativeTime,
   joinArray,
@@ -25,6 +24,7 @@ import {
 } from "../toon.js";
 
 interface MrItem {
+  [key: string]: unknown;
   iid: number;
   title: string;
   state: string;
@@ -37,7 +37,11 @@ interface MrItem {
   diff_refs?: unknown;
   merge_error?: string;
   pipelines?: unknown[];
-  notes?: Array<{ author: { username: string }; body: string; created_at: string }>;
+  notes?: Array<{
+    author: { username: string };
+    body: string;
+    created_at: string;
+  }>;
 }
 
 const MERGE_STATUS_MAP: Record<string, string> = {
@@ -69,7 +73,10 @@ const MR_LIST_EXTRA_FIELDS: Record<string, ExtraFieldSpec> = {
     jsonKey: "milestone",
     def: pluck("milestone", "title", "milestone"),
   },
-  merged_at: { jsonKey: "merged_at", def: relativeTime("merged_at", "merged_at") },
+  merged_at: {
+    jsonKey: "merged_at",
+    def: relativeTime("merged_at", "merged_at"),
+  },
   url: { jsonKey: "web_url", def: field("web_url", "url") },
 };
 
@@ -79,35 +86,26 @@ const viewSchema: FieldDef[] = [
   lower("state"),
   pluck("author", "username", "author"),
   mapEnum("merge_status", MERGE_STATUS_MAP, "unknown", "merge_status"),
-  custom("description", (item: MrItem) => truncateBody(item.description, 500)),
-  custom("pipelines", (item: MrItem) => {
+  custom("description", (item) =>
+    truncateBody(item.description as string | undefined, 500),
+  ),
+  custom("pipelines", (item) => {
     if (!Array.isArray(item.pipelines) || item.pipelines.length === 0)
       return "none";
     const pipes = item.pipelines as Record<string, unknown>[];
-    return pipes.map((p) => `#${p.id ?? p.iid} (${(p.status ?? "unknown") as string})`).join(", ");
+    return pipes
+      .map((p) => `#${p.id ?? p.iid} (${(p.status ?? "unknown") as string})`)
+      .join(", ");
   }),
 ];
 
 const viewSchemaFull: FieldDef[] = viewSchema.map((f) =>
   "as" in f && f.as === "description"
-    ? custom("description", (item: MrItem) =>
+    ? custom("description", (item) =>
         typeof item.description === "string" ? item.description : "",
       )
     : f,
 );
-
-const createResultSchema: FieldDef[] = [
-  field("iid", "number"),
-  field("title"),
-  lower("state"),
-  field("web_url", "url"),
-];
-
-const mergeResultSchema: FieldDef[] = [
-  field("iid", "number"),
-  lower("state"),
-  field("merged_by", "merged_by"),
-];
 
 export const MR_HELP = `usage: glab-axi mr <subcommand> [flags]
 subcommands[11]:
@@ -150,10 +148,14 @@ async function mrList(args: string[], ctx?: RepoContext): Promise<string> {
       ? LIST_JSON_FIELDS + "," + extraJsonKeys.join(",")
       : LIST_JSON_FIELDS;
   const ghArgs = [
-    "mr", "list",
-    "--json", jsonFields,
-    "--state", state,
-    "--per-page", perPage,
+    "mr",
+    "list",
+    "--json",
+    jsonFields,
+    "--state",
+    state,
+    "--per-page",
+    perPage,
   ];
   if (label) ghArgs.push("--label", label);
   if (assignee) ghArgs.push("--assignee", assignee);
@@ -183,15 +185,26 @@ async function mrView(args: string[], ctx?: RepoContext): Promise<string> {
   const full = takeBoolFlag(args, "--full");
   const num = takeNumber(args, "MR");
 
-  const fields = "iid,title,state,author,merge_status,description,labels,assignees,milestone,merge_error,merge_status,pipelines" + (includeNotes ? ",notes" : "");
-  const mr = await glabJson<MrItem>(["mr", "view", String(num), "--json", fields], ctx);
+  const fields =
+    "iid,title,state,author,merge_status,description,labels,assignees,milestone,merge_error,merge_status,pipelines" +
+    (includeNotes ? ",notes" : "");
+  const mr = await glabJson<MrItem>(
+    ["mr", "view", String(num), "--json", fields],
+    ctx,
+  );
 
   const schema = [...(full ? viewSchemaFull : viewSchema)];
 
   if (includeNotes && Array.isArray(mr.notes)) {
     schema.push(
-      custom("notes", (item: MrItem) =>
-        (item.notes ?? []).map((n) => ({
+      custom("notes", (item) =>
+        (
+          (item.notes ?? []) as Array<{
+            author?: { username: string };
+            body?: string;
+            created_at?: string;
+          }>
+        ).map((n) => ({
           author: n.author?.username ?? "unknown",
           body: n.body ?? "",
           created: n.created_at ?? "",
@@ -201,7 +214,10 @@ async function mrView(args: string[], ctx?: RepoContext): Promise<string> {
   } else {
     const noteCount = Array.isArray(mr.notes) ? mr.notes.length : 0;
     schema.push(
-      custom("note_count", () => `${noteCount} — use --comments to see full notes`),
+      custom(
+        "note_count",
+        () => `${noteCount} — use --comments to see full notes`,
+      ),
     );
   }
 
@@ -210,7 +226,13 @@ async function mrView(args: string[], ctx?: RepoContext): Promise<string> {
   return renderOutput([
     renderDetail("merge_request", mr, schema),
     renderHelp(
-      getSuggestions({ domain: "mr", action: "view", state: stateLower, id: num, repo: ctx }),
+      getSuggestions({
+        domain: "mr",
+        action: "view",
+        state: stateLower,
+        id: num,
+        repo: ctx,
+      }),
     ),
   ]);
 }
@@ -407,9 +429,7 @@ async function mrNote(args: string[], ctx?: RepoContext): Promise<string> {
 async function mrDiff(args: string[], ctx?: RepoContext): Promise<string> {
   const num = takeNumber(args, "MR");
   const diff = await glabExec(["mr", "diff", String(num)], ctx);
-  return renderOutput([
-    encode({ mr_diff: { number: num, diff } }),
-  ]);
+  return renderOutput([encode({ mr_diff: { number: num, diff } })]);
 }
 
 async function mrCheckout(args: string[], ctx?: RepoContext): Promise<string> {

@@ -71,7 +71,11 @@ export async function homeCommand(
       ? renderList("issues", issues, issueSchema)
       : "issues: 0 open",
   );
-  blocks.push(mrs.length ? renderList("merge_requests", mrs, mrSchema) : "merge_requests: 0 open");
+  blocks.push(
+    mrs.length
+      ? renderList("merge_requests", mrs, mrSchema)
+      : "merge_requests: 0 open",
+  );
 
   const hints: string[] = [];
   if (issues.length >= 3)

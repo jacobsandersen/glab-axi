@@ -1,5 +1,5 @@
 import type { RepoContext } from "../context.js";
-import { glabJson, glabExec, glabRaw } from "../glab.js";
+import { glabJson, glabExec } from "../glab.js";
 import { AxiError } from "../errors.js";
 import { getSuggestions } from "../suggestions.js";
 import {
@@ -122,7 +122,10 @@ const noteResultSchema: FieldDef[] = [
 
 const ISSUE_LIST_EXTRA_FIELDS: Record<string, ExtraFieldSpec> = {
   description: { jsonKey: "description", def: field("description") },
-  closed_at: { jsonKey: "closed_at", def: relativeTime("closed_at", "closed_at") },
+  closed_at: {
+    jsonKey: "closed_at",
+    def: relativeTime("closed_at", "closed_at"),
+  },
   labels: { jsonKey: "labels", def: joinArray("labels", "name", "labels") },
   milestone: {
     jsonKey: "milestone",
@@ -154,11 +157,7 @@ async function listIssues(args: string[], ctx?: RepoContext): Promise<string> {
     extraJsonKeys.length > 0
       ? baseJsonFields + "," + extraJsonKeys.join(",")
       : baseJsonFields;
-  const ghArgs = [
-    "issue", "list",
-    "--json", jsonFields,
-    "--per-page", perPage,
-  ];
+  const ghArgs = ["issue", "list", "--json", jsonFields, "--per-page", perPage];
   if (state) ghArgs.push("--state", state);
   if (label) ghArgs.push("--label", label);
   if (assignee) ghArgs.push("--assignee", assignee);
@@ -193,7 +192,9 @@ async function viewIssue(args: string[], ctx?: RepoContext): Promise<string> {
   const withNotes = hasFlag(args, "--comments");
   const full = hasFlag(args, "--full");
 
-  const fields = "iid,title,state,author,created_at,description,labels,assignees,milestone" + (withNotes ? ",notes" : "");
+  const fields =
+    "iid,title,state,author,created_at,description,labels,assignees,milestone" +
+    (withNotes ? ",notes" : "");
   const ghArgs = ["issue", "view", String(num), "--json", fields];
 
   const item = await glabJson<Record<string, unknown>>(ghArgs, ctx);
@@ -207,9 +208,7 @@ async function viewIssue(args: string[], ctx?: RepoContext): Promise<string> {
       renderList(
         "notes",
         item.notes as Record<string, unknown>[],
-        noteResultSchema.filter((d) =>
-          "key" in d ? d.key !== "iid" : true,
-        ),
+        noteResultSchema.filter((d) => ("key" in d ? d.key !== "iid" : true)),
       ),
     );
   }
@@ -290,7 +289,13 @@ async function editIssue(args: string[], ctx?: RepoContext): Promise<string> {
   }
 
   const item = await glabJson<Record<string, unknown>>(
-    ["issue", "view", String(num), "--json", "iid,title,state,labels,assignees"],
+    [
+      "issue",
+      "view",
+      String(num),
+      "--json",
+      "iid,title,state,labels,assignees",
+    ],
     ctx,
   );
 
@@ -413,9 +418,7 @@ async function noteOnIssue(args: string[], ctx?: RepoContext): Promise<string> {
   const lastNote = issue.notes[issue.notes.length - 1];
   const noteItem = { ...lastNote, iid: num };
 
-  const blocks: string[] = [
-    renderDetail("note", noteItem, noteResultSchema),
-  ];
+  const blocks: string[] = [renderDetail("note", noteItem, noteResultSchema)];
   const help = getSuggestions({
     domain: "issue",
     action: "note",
@@ -427,7 +430,10 @@ async function noteOnIssue(args: string[], ctx?: RepoContext): Promise<string> {
   return renderOutput(blocks);
 }
 
-async function subscribeIssue(args: string[], ctx?: RepoContext): Promise<string> {
+async function subscribeIssue(
+  args: string[],
+  ctx?: RepoContext,
+): Promise<string> {
   const num = requireNumber(getPositional(args, 1), "issue");
   await glabExec(["issue", "subscribe", String(num)], ctx);
   return renderOutput([
@@ -438,7 +444,10 @@ async function subscribeIssue(args: string[], ctx?: RepoContext): Promise<string
   ]);
 }
 
-async function unsubscribeIssue(args: string[], ctx?: RepoContext): Promise<string> {
+async function unsubscribeIssue(
+  args: string[],
+  ctx?: RepoContext,
+): Promise<string> {
   const num = requireNumber(getPositional(args, 1), "issue");
   await glabExec(["issue", "unsubscribe", String(num)], ctx);
   return renderOutput([

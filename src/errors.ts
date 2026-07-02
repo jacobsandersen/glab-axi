@@ -50,7 +50,9 @@ const patterns: ErrorPattern[] = [
     pattern: /pipeline (\d+) not found/i,
     code: "NOT_FOUND",
     message: (m) => `Pipeline ${m[1]} not found`,
-    suggestions: () => [`Run \`glab-axi pipeline list\` to see recent pipelines`],
+    suggestions: () => [
+      `Run \`glab-axi pipeline list\` to see recent pipelines`,
+    ],
   },
   {
     pattern: /job (\d+) not found/i,
