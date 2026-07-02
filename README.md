@@ -33,19 +33,19 @@ glab-axi setup hooks
 
 ## Commands
 
-| Command | Description |
-|---------|-------------|
-| issue | Issues — list, view, create, edit, close, reopen, note, subscribe, unsubscribe |
-| mr | Merge requests — list, view, create, edit, close, reopen, merge, approve, note, diff, checkout |
-| pipeline | Pipelines — list, view, retry, cancel, delete |
-| job | Jobs — list, view, log, retry |
-| release | Releases — list, view, create, delete, upload |
-| project | Projects — view, list, create, fork |
-| label | Labels — list, create, edit, delete |
-| variable | CI/CD variables — list, set, delete |
-| search | Search issues, MRs, projects, blobs |
-| api | Raw GitLab API access |
-| setup | Install optional agent session hooks |
+| Command  | Description                                                                                    |
+| -------- | ---------------------------------------------------------------------------------------------- |
+| issue    | Issues — list, view, create, edit, close, reopen, note, subscribe, unsubscribe                 |
+| mr       | Merge requests — list, view, create, edit, close, reopen, merge, approve, note, diff, checkout |
+| pipeline | Pipelines — list, view, retry, cancel, delete                                                  |
+| job      | Jobs — list, view, log, retry                                                                  |
+| release  | Releases — list, view, create, delete, upload                                                  |
+| project  | Projects — view, list, create, fork                                                            |
+| label    | Labels — list, create, edit, delete                                                            |
+| variable | CI/CD variables — list, set, delete                                                            |
+| search   | Search issues, MRs, projects, blobs                                                            |
+| api      | Raw GitLab API access                                                                          |
+| setup    | Install optional agent session hooks                                                           |
 
 ## Global flags
 
@@ -55,13 +55,13 @@ glab-axi setup hooks
 
 ## Related tools
 
-| Tool | Description |
-|------|-------------|
-| [axi](https://github.com/kunchenguid/axi) | The AXI monorepo — SDK, spec, and reference implementations |
-| [gh-axi](https://github.com/kunchenguid/gh-axi) | GitHub equivalent of glab-axi, same AXI pattern |
-| [toon](https://toonformat.dev) | Token-Oriented Object Notation spec and libraries |
-| [glab](https://gitlab.com/gitlab-org/cli) | Official GitLab CLI that glab-axi wraps |
-| [no-mistakes](https://github.com/kunchenguid/no-mistakes) | Validation gate for agent code changes |
+| Tool                                                      | Description                                                 |
+| --------------------------------------------------------- | ----------------------------------------------------------- |
+| [axi](https://github.com/kunchenguid/axi)                 | The AXI monorepo — SDK, spec, and reference implementations |
+| [gh-axi](https://github.com/kunchenguid/gh-axi)           | GitHub equivalent of glab-axi, same AXI pattern             |
+| [toon](https://toonformat.dev)                            | Token-Oriented Object Notation spec and libraries           |
+| [glab](https://gitlab.com/gitlab-org/cli)                 | Official GitLab CLI that glab-axi wraps                     |
+| [no-mistakes](https://github.com/kunchenguid/no-mistakes) | Validation gate for agent code changes                      |
 
 ## Development
 
