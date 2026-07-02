@@ -98,7 +98,13 @@ function getSearchRepo(args: string[], ctx?: RepoContext): string | undefined {
   return getFlag(args, "--repo") ?? ctx?.nwo;
 }
 
-const COMMON_FILTER_FLAGS = ["--repo", "--owner", "--state", "--label", "--author"];
+const COMMON_FILTER_FLAGS = [
+  "--repo",
+  "--owner",
+  "--state",
+  "--label",
+  "--author",
+];
 
 function hasSearchFilters(args: string[], extraFlags: string[] = []): boolean {
   return [...COMMON_FILTER_FLAGS, ...extraFlags].some(
@@ -106,13 +112,27 @@ function hasSearchFilters(args: string[], extraFlags: string[] = []): boolean {
   );
 }
 
-async function searchIssues(args: string[], ctx?: RepoContext): Promise<string> {
+async function searchIssues(
+  args: string[],
+  ctx?: RepoContext,
+): Promise<string> {
   const query = extractQuery(args);
   if (!query && !hasSearchFilters(args))
-    throw new AxiError("Search query or filters required: glab-axi search issues <query> [--state opened] ...", "VALIDATION_ERROR");
+    throw new AxiError(
+      "Search query or filters required: glab-axi search issues <query> [--state opened] ...",
+      "VALIDATION_ERROR",
+    );
 
   const limit = getFlag(args, "--limit") ?? DEFAULT_SEARCH_LIMIT;
-  const ghArgs = ["search", "issues", query, "--json", "iid,title,project,state,author,created_at", "--per-page", limit];
+  const ghArgs = [
+    "search",
+    "issues",
+    query,
+    "--json",
+    "iid,title,project,state,author,created_at",
+    "--per-page",
+    limit,
+  ];
   const repo = getSearchRepo(args, ctx);
   if (repo) ghArgs.push("--repo", repo);
   const state = getFlag(args, "--state");
@@ -129,17 +149,39 @@ async function searchIssues(args: string[], ctx?: RepoContext): Promise<string> 
   const results = await glabJson<Record<string, unknown>[]>(ghArgs);
   const limitNum = parseInt(limit, 10);
   const displayed = results.slice(0, DISPLAY_LIMIT);
-  const countLine = formatCountLine({ count: results.length, limit: limitNum, apiLimitHit: results.length === limitNum, displayLimit: DISPLAY_LIMIT });
-  return renderOutput([countLine, renderList("issues", displayed, issueSchema), renderHelp(getSuggestions({ domain: "search", action: "issues", repo: ctx }))]);
+  const countLine = formatCountLine({
+    count: results.length,
+    limit: limitNum,
+    apiLimitHit: results.length === limitNum,
+    displayLimit: DISPLAY_LIMIT,
+  });
+  return renderOutput([
+    countLine,
+    renderList("issues", displayed, issueSchema),
+    renderHelp(
+      getSuggestions({ domain: "search", action: "issues", repo: ctx }),
+    ),
+  ]);
 }
 
 async function searchMrs(args: string[], ctx?: RepoContext): Promise<string> {
   const query = extractQuery(args);
   if (!query && !hasSearchFilters(args))
-    throw new AxiError("Search query or filters required: glab-axi search mrs <query> [--state opened] ...", "VALIDATION_ERROR");
+    throw new AxiError(
+      "Search query or filters required: glab-axi search mrs <query> [--state opened] ...",
+      "VALIDATION_ERROR",
+    );
 
   const limit = getFlag(args, "--limit") ?? DEFAULT_SEARCH_LIMIT;
-  const ghArgs = ["search", "mrs", query, "--json", "iid,title,project,state,author,created_at", "--per-page", limit];
+  const ghArgs = [
+    "search",
+    "mrs",
+    query,
+    "--json",
+    "iid,title,project,state,author,created_at",
+    "--per-page",
+    limit,
+  ];
   const repo = getSearchRepo(args, ctx);
   if (repo) ghArgs.push("--repo", repo);
   const state = getFlag(args, "--state");
@@ -156,42 +198,102 @@ async function searchMrs(args: string[], ctx?: RepoContext): Promise<string> {
   const results = await glabJson<Record<string, unknown>[]>(ghArgs);
   const limitNum = parseInt(limit, 10);
   const displayed = results.slice(0, DISPLAY_LIMIT);
-  const countLine = formatCountLine({ count: results.length, limit: limitNum, apiLimitHit: results.length === limitNum, displayLimit: DISPLAY_LIMIT });
-  return renderOutput([countLine, renderList("merge_requests", displayed, mrSchema), renderHelp(getSuggestions({ domain: "search", action: "mrs", repo: ctx }))]);
+  const countLine = formatCountLine({
+    count: results.length,
+    limit: limitNum,
+    apiLimitHit: results.length === limitNum,
+    displayLimit: DISPLAY_LIMIT,
+  });
+  return renderOutput([
+    countLine,
+    renderList("merge_requests", displayed, mrSchema),
+    renderHelp(getSuggestions({ domain: "search", action: "mrs", repo: ctx })),
+  ]);
 }
 
-async function searchProjects(args: string[], ctx?: RepoContext): Promise<string> {
+async function searchProjects(
+  args: string[],
+  ctx?: RepoContext,
+): Promise<string> {
   const query = extractQuery(args);
   if (!query && !hasSearchFilters(args))
-    throw new AxiError("Search query or filters required: glab-axi search projects <query>", "VALIDATION_ERROR");
+    throw new AxiError(
+      "Search query or filters required: glab-axi search projects <query>",
+      "VALIDATION_ERROR",
+    );
 
   const limit = getFlag(args, "--limit") ?? DEFAULT_SEARCH_LIMIT;
-  const ghArgs = ["search", "projects", query, "--json", "path_with_namespace,description,star_count,forks_count,last_activity_at", "--per-page", limit];
+  const ghArgs = [
+    "search",
+    "projects",
+    query,
+    "--json",
+    "path_with_namespace,description,star_count,forks_count,last_activity_at",
+    "--per-page",
+    limit,
+  ];
 
   const results = await glabJson<Record<string, unknown>[]>(ghArgs);
   const limitNum = parseInt(limit, 10);
   const displayed = results.slice(0, DISPLAY_LIMIT);
-  const countLine = formatCountLine({ count: results.length, limit: limitNum, apiLimitHit: results.length === limitNum, displayLimit: DISPLAY_LIMIT });
-  return renderOutput([countLine, renderList("projects", displayed, projectSchema), renderHelp(getSuggestions({ domain: "search", action: "projects", repo: ctx }))]);
+  const countLine = formatCountLine({
+    count: results.length,
+    limit: limitNum,
+    apiLimitHit: results.length === limitNum,
+    displayLimit: DISPLAY_LIMIT,
+  });
+  return renderOutput([
+    countLine,
+    renderList("projects", displayed, projectSchema),
+    renderHelp(
+      getSuggestions({ domain: "search", action: "projects", repo: ctx }),
+    ),
+  ]);
 }
 
 async function searchBlobs(args: string[], ctx?: RepoContext): Promise<string> {
   const query = extractQuery(args);
-  if (!query) throw new AxiError("Search query is required: glab-axi search blobs <query>", "VALIDATION_ERROR");
+  if (!query)
+    throw new AxiError(
+      "Search query is required: glab-axi search blobs <query>",
+      "VALIDATION_ERROR",
+    );
 
   const limit = getFlag(args, "--limit") ?? DEFAULT_SEARCH_LIMIT;
-  const ghArgs = ["search", "blobs", query, "--json", "filename,ref,project,data", "--per-page", limit];
+  const ghArgs = [
+    "search",
+    "blobs",
+    query,
+    "--json",
+    "filename,ref,project,data",
+    "--per-page",
+    limit,
+  ];
   const repo = getSearchRepo(args, ctx);
   if (repo) ghArgs.push("--repo", repo);
 
   const results = await glabJson<Record<string, unknown>[]>(ghArgs);
   const limitNum = parseInt(limit, 10);
   const displayed = results.slice(0, DISPLAY_LIMIT);
-  const countLine = formatCountLine({ count: results.length, limit: limitNum, apiLimitHit: results.length === limitNum, displayLimit: DISPLAY_LIMIT });
-  return renderOutput([countLine, renderList("results", displayed, blobSchema), renderHelp(getSuggestions({ domain: "search", action: "blobs", repo: ctx }))]);
+  const countLine = formatCountLine({
+    count: results.length,
+    limit: limitNum,
+    apiLimitHit: results.length === limitNum,
+    displayLimit: DISPLAY_LIMIT,
+  });
+  return renderOutput([
+    countLine,
+    renderList("results", displayed, blobSchema),
+    renderHelp(
+      getSuggestions({ domain: "search", action: "blobs", repo: ctx }),
+    ),
+  ]);
 }
 
-export async function searchCommand(args: string[], ctx?: RepoContext): Promise<string> {
+export async function searchCommand(
+  args: string[],
+  ctx?: RepoContext,
+): Promise<string> {
   const sub = args[0];
 
   if (sub === "--help" || sub === undefined) return SEARCH_HELP;

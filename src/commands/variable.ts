@@ -32,14 +32,22 @@ const listSchema: FieldDef[] = [
   relativeTime("updated_at", "updated"),
 ];
 
-async function listVariables(_args: string[], ctx?: RepoContext): Promise<string> {
+async function listVariables(
+  _args: string[],
+  ctx?: RepoContext,
+): Promise<string> {
   const variables = await glabJson<Record<string, unknown>[]>(
     ["variable", "list", "--json", "key,value,updated_at"],
     ctx,
   );
   const isEmpty = variables.length === 0;
 
-  const suggestions = getSuggestions({ domain: "variable", action: "list", isEmpty, repo: ctx });
+  const suggestions = getSuggestions({
+    domain: "variable",
+    action: "list",
+    isEmpty,
+    repo: ctx,
+  });
   return renderOutput([
     `count: ${variables.length}`,
     renderList("variables", variables, listSchema),
@@ -53,7 +61,10 @@ async function setVariable(args: string[], ctx?: RepoContext): Promise<string> {
   const positionals = remaining.filter((a) => !a.startsWith("-"));
   const name = positionals[0];
   if (!name) {
-    throw new AxiError("Variable name is required: glab-axi variable set <name>", "VALIDATION_ERROR");
+    throw new AxiError(
+      "Variable name is required: glab-axi variable set <name>",
+      "VALIDATION_ERROR",
+    );
   }
 
   const value = await resolveValue(flagValue, "variable");
@@ -61,25 +72,48 @@ async function setVariable(args: string[], ctx?: RepoContext): Promise<string> {
 
   return renderOutput([
     encode({ set: "ok", variable: name }),
-    renderHelp(getSuggestions({ domain: "variable", action: "set", id: name, repo: ctx })),
+    renderHelp(
+      getSuggestions({
+        domain: "variable",
+        action: "set",
+        id: name,
+        repo: ctx,
+      }),
+    ),
   ]);
 }
 
-async function deleteVariable(args: string[], ctx?: RepoContext): Promise<string> {
+async function deleteVariable(
+  args: string[],
+  ctx?: RepoContext,
+): Promise<string> {
   const positionals = args.filter((a) => !a.startsWith("-"));
   const name = positionals[1];
   if (!name) {
-    throw new AxiError("Variable name is required: glab-axi variable delete <name>", "VALIDATION_ERROR");
+    throw new AxiError(
+      "Variable name is required: glab-axi variable delete <name>",
+      "VALIDATION_ERROR",
+    );
   }
 
   await glabExec(["variable", "delete", name], ctx);
   return renderOutput([
     encode({ delete: "ok", variable: name }),
-    renderHelp(getSuggestions({ domain: "variable", action: "delete", id: name, repo: ctx })),
+    renderHelp(
+      getSuggestions({
+        domain: "variable",
+        action: "delete",
+        id: name,
+        repo: ctx,
+      }),
+    ),
   ]);
 }
 
-export async function variableCommand(args: string[], ctx?: RepoContext): Promise<string> {
+export async function variableCommand(
+  args: string[],
+  ctx?: RepoContext,
+): Promise<string> {
   const sub = args[0];
 
   if (sub === "--help" || sub === undefined) return VARIABLE_HELP;

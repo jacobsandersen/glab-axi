@@ -114,12 +114,14 @@ const table: SuggestionEntry[] = [
   {
     match: (c) =>
       c.domain === "mr" && c.action === "view" && c.state === "merged",
-    lines: (c) => [],
+    lines: () => [],
   },
   {
     match: (c) =>
       c.domain === "mr" && c.action === "view" && c.state === "closed",
-    lines: (c) => [`Run \`glab-axi${repoFlag(c)} mr reopen ${c.id}\` to reopen`],
+    lines: (c) => [
+      `Run \`glab-axi${repoFlag(c)} mr reopen ${c.id}\` to reopen`,
+    ],
   },
   {
     match: (c) => c.domain === "mr" && c.action === "create",
@@ -135,7 +137,7 @@ const table: SuggestionEntry[] = [
   },
   {
     match: (c) => c.domain === "mr" && c.action === "merge",
-    lines: (c) => [],
+    lines: () => [],
   },
 
   {
@@ -239,7 +241,9 @@ const table: SuggestionEntry[] = [
   },
   {
     match: (c) => c.domain === "label" && c.action === "create",
-    lines: (c) => [`Run \`glab-axi${repoFlag(c)} label list\` to see all labels`],
+    lines: (c) => [
+      `Run \`glab-axi${repoFlag(c)} label list\` to see all labels`,
+    ],
   },
   {
     match: (c) => c.domain === "label" && c.action === "delete",

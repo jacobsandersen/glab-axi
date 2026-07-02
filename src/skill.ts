@@ -8,7 +8,14 @@ export const SKILL_DESCRIPTION =
 
 export const SKILL_AUTHOR = "Jacob Andersen (jacobsandersen)";
 
-export const HERMES_TAGS = ["gitlab", "git", "ci", "cicd", "merge-requests", "releases"];
+export const HERMES_TAGS = [
+  "gitlab",
+  "git",
+  "ci",
+  "cicd",
+  "merge-requests",
+  "releases",
+];
 export const HERMES_CATEGORY = "devops";
 
 function yamlDoubleQuote(value: string): string {
