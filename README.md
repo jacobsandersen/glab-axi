@@ -58,10 +58,10 @@ glab-axi setup hooks
 | Tool | Description |
 |------|-------------|
 | [axi](https://github.com/kunchenguid/axi) | The AXI monorepo — SDK, spec, and reference implementations |
-| [gh-axi](https://github.com/kunchenguid/axi) | GitHub equivalent of glab-axi, same AXI pattern |
+| [gh-axi](https://github.com/kunchenguid/gh-axi) | GitHub equivalent of glab-axi, same AXI pattern |
 | [toon](https://toonformat.dev) | Token-Oriented Object Notation spec and libraries |
 | [glab](https://gitlab.com/gitlab-org/cli) | Official GitLab CLI that glab-axi wraps |
-| [no-mistakes](https://github.com/kunchenguid/axi) | Validation gate for agent code changes |
+| [no-mistakes](https://github.com/kunchenguid/no-mistakes) | Validation gate for agent code changes |
 
 ## Development
 
