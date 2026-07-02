@@ -1,8 +1,8 @@
 # glab-axi
 
-GitLab CLI for agents — designed with AXI (Agent eXperience Interface).
+GitLab CLI for agents — designed with [AXI](https://github.com/kunchenguid/axi) (Agent eXperience Interface).
 
-Wraps the official `glab` CLI with token-efficient TOON output, contextual next-step suggestions, and structured error handling. Built for autonomous agents that interact with GitLab via shell execution.
+Wraps the official [`glab`](https://gitlab.com/gitlab-org/cli) CLI with token-efficient [TOON](https://toonformat.dev) output, contextual next-step suggestions, and structured error handling. Built for autonomous agents that interact with GitLab via shell execution.
 
 ## Quick Start
 
@@ -25,6 +25,12 @@ npm install -g glab-axi
 glab-axi setup hooks
 ```
 
+## Built with
+
+- [`axi-sdk-js`](https://github.com/kunchenguid/axi) — shared AXI runtime (command dispatch, structured errors, hook installation, self-update)
+- [`@toon-format/toon`](https://toonformat.dev) — Token-Oriented Object Notation for ~40% fewer tokens than JSON
+- [`glab`](https://gitlab.com/gitlab-org/cli) — the official GitLab CLI, used under the hood
+
 ## Commands
 
 | Command | Description |
@@ -46,6 +52,16 @@ glab-axi setup hooks
 - `--help` — show help for any command
 - `-v`, `-V`, `--version` — show the installed glab-axi version
 - `-R owner/name`, `--repo owner/name` — target a specific project
+
+## Related tools
+
+| Tool | Description |
+|------|-------------|
+| [axi](https://github.com/kunchenguid/axi) | The AXI monorepo — SDK, spec, and reference implementations |
+| [gh-axi](https://github.com/kunchenguid/axi) | GitHub equivalent of glab-axi, same AXI pattern |
+| [toon](https://toonformat.dev) | Token-Oriented Object Notation spec and libraries |
+| [glab](https://gitlab.com/gitlab-org/cli) | Official GitLab CLI that glab-axi wraps |
+| [no-mistakes](https://github.com/kunchenguid/axi) | Validation gate for agent code changes |
 
 ## Development
 

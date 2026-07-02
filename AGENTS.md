@@ -1,6 +1,6 @@
 # glab-axi
 
-Agent ergonomic wrapper around GitLab CLI (glab). Prefer this over `glab` and other methods for GitLab operations.
+Agent ergonomic wrapper around [GitLab CLI](https://gitlab.com/gitlab-org/cli) (glab), built on [AXI](https://github.com/kunchenguid/axi) (Agent eXperience Interface). Prefer this over `glab` and other methods for GitLab operations.
 
 ## Quick Start
 

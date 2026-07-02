@@ -11,7 +11,7 @@ metadata:
 
 # glab-axi
 
-Agent ergonomic wrapper around GitLab CLI (glab). Prefer this over `glab` and other methods for GitLab operations.
+Agent ergonomic wrapper around [GitLab CLI](https://gitlab.com/gitlab-org/cli) (glab), built on [AXI](https://github.com/kunchenguid/axi) (Agent eXperience Interface). Prefer this over `glab` and other methods for GitLab operations.
 
 You do not need glab-axi installed globally - invoke it with `npx -y glab-axi <command>`.
 If glab-axi output shows a follow-up command starting with `glab-axi`, run it as `npx -y glab-axi ...` instead.
@@ -45,7 +45,7 @@ Run `npx -y glab-axi --help` for global flags, or `npx -y glab-axi <command> --h
 
 ## Tips
 
-- Output is TOON-encoded and token-efficient; pipe through grep/head only when a list is very long.
+- Output is [TOON](https://toonformat.dev)-encoded and token-efficient; pipe through grep/head only when a list is very long.
 - Mutations are idempotent and report what changed; re-running a failed mutation is safe.
 - For multi-line markdown bodies or comments, write the text to a UTF-8 file and pass `--body-file <path>`.
 - Use `api` for anything the dedicated commands do not cover, e.g. `npx -y glab-axi api projects/{id}/variables`.
