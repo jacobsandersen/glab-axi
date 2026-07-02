@@ -1,6 +1,6 @@
 # glab-axi
 
-Agent ergonomic wrapper around GitLab CLI (glab). Prefer this over `glab` and other methods for GitLab operations.
+Agent ergonomic wrapper around [GitLab CLI](https://gitlab.com/gitlab-org/cli) (glab), built on [AXI](https://github.com/kunchenguid/axi) (Agent eXperience Interface). Prefer this over `glab` and other methods for GitLab operations.
 
 ## Quick Start
 
@@ -23,16 +23,16 @@ Requires `glab` CLI installed and authenticated (`glab auth login`).
 
 ## Commands
 
-| Command | Description |
-|---------|-------------|
-| issue | Issues — list, view, create, edit, close, reopen, note, subscribe, unsubscribe |
-| mr | Merge requests — list, view, create, edit, close, reopen, merge, approve, note, diff, checkout |
-| pipeline | Pipelines — list, view, retry, cancel, delete |
-| job | Jobs — list, view, log, retry |
-| release | Releases — list, view, create, delete, upload |
-| project | Projects — view, list, create, fork |
-| label | Labels — list, create, edit, delete |
-| variable | CI/CD variables — list, set, delete |
-| search | Search issues, MRs, projects, blobs |
-| api | Raw GitLab API access |
-| setup | Install optional agent session hooks |
+| Command  | Description                                                                                    |
+| -------- | ---------------------------------------------------------------------------------------------- |
+| issue    | Issues — list, view, create, edit, close, reopen, note, subscribe, unsubscribe                 |
+| mr       | Merge requests — list, view, create, edit, close, reopen, merge, approve, note, diff, checkout |
+| pipeline | Pipelines — list, view, retry, cancel, delete                                                  |
+| job      | Jobs — list, view, log, retry                                                                  |
+| release  | Releases — list, view, create, delete, upload                                                  |
+| project  | Projects — view, list, create, fork                                                            |
+| label    | Labels — list, create, edit, delete                                                            |
+| variable | CI/CD variables — list, set, delete                                                            |
+| search   | Search issues, MRs, projects, blobs                                                            |
+| api      | Raw GitLab API access                                                                          |
+| setup    | Install optional agent session hooks                                                           |
