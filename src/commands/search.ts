@@ -34,7 +34,7 @@ const SEARCH_VALUE_FLAGS = new Set([
 ]);
 
 export const SEARCH_HELP = `usage: glab-axi search <type> <query> [flags]
-types[5]:
+types[4]:
   issues, mrs, projects, blobs
 flags{common}:
   --repo, --owner, --state, --label, --author, --sort, --limit <n> (default 1000), --scope (all|title|description)

@@ -29,7 +29,7 @@ glab-axi setup hooks
 
 | Command | Description |
 |---------|-------------|
-| issue | Issues — list, view, create, edit, close, reopen, note |
+| issue | Issues — list, view, create, edit, close, reopen, note, subscribe, unsubscribe |
 | mr | Merge requests — list, view, create, edit, close, reopen, merge, approve, note, diff, checkout |
 | pipeline | Pipelines — list, view, retry, cancel, delete |
 | job | Jobs — list, view, log, retry |
