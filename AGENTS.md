@@ -36,3 +36,13 @@ Requires `glab` CLI installed and authenticated (`glab auth login`).
 | search   | Search issues, MRs, projects, blobs                                                            |
 | api      | Raw GitLab API access                                                                          |
 | setup    | Install optional agent session hooks                                                           |
+
+## Versioning
+
+Follow [semver](https://semver.org/). Bump the version in `package.json` before merging to main:
+
+- **Patch** (0.2.x) — bug fixes, internal refactors, doc-only changes
+- **Minor** (0.x.0) — new features, new commands, new flags, non-breaking behavior changes
+- **Major** (x.0.0) — breaking changes to CLI output format, flag names, or error codes
+
+Always bump the version in `package.json` when the PR contains user-facing changes (new features, bug fixes, flag changes, output format changes). Do not bump for internal-only changes (tests, CI, tooling) unless they affect the published package.
