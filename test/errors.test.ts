@@ -3,7 +3,7 @@ import { mapGlabError } from "../src/errors.js";
 
 describe("mapGlabError", () => {
   it("maps 'Project not found' to REPO_NOT_FOUND", () => {
-    const err = mapGlabError("ERROR: Project \"foo/bar\" not found", 1);
+    const err = mapGlabError('ERROR: Project "foo/bar" not found', 1);
     expect(err.code).toBe("REPO_NOT_FOUND");
     expect(err.message).toContain("foo/bar");
   });
@@ -119,8 +119,7 @@ describe("mapGlabError", () => {
   });
 
   it("skips styled ERROR header in UNKNOWN fallback", () => {
-    const stderr =
-      "\n  ERROR  \n\n  Something went wrong on GitLab's end";
+    const stderr = "\n  ERROR  \n\n  Something went wrong on GitLab's end";
     const err = mapGlabError(stderr, 1);
     expect(err.code).toBe("UNKNOWN");
     expect(err.message).toBe("Something went wrong on GitLab's end");

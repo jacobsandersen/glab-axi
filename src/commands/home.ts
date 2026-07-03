@@ -48,14 +48,7 @@ export async function homeCommand(
       ctx,
     ).catch(() => [] as Record<string, unknown>[]),
     glabJson<Record<string, unknown>[]>(
-      [
-        "mr",
-        "list",
-        "--output",
-        "json",
-        "--per-page",
-        "3",
-      ],
+      ["mr", "list", "--output", "json", "--per-page", "3"],
       ctx,
     ).catch(() => [] as Record<string, unknown>[]),
   ]);

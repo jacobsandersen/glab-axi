@@ -140,10 +140,7 @@ const ISSUE_LIST_EXTRA_FIELDS: Record<string, ExtraFieldSpec> = {
 
 async function listIssues(args: string[], ctx?: RepoContext): Promise<string> {
   const fieldsArg = takeFlag(args, "--fields");
-  const { extraDefs, extraJsonKeys } = parseFields(
-    fieldsArg,
-    ISSUE_LIST_EXTRA_FIELDS,
-  );
+  const { extraDefs } = parseFields(fieldsArg, ISSUE_LIST_EXTRA_FIELDS);
   const state = takeFlag(args, "--state");
   const label = takeFlag(args, "--label");
   const assignee = takeFlag(args, "--assignee");
@@ -152,11 +149,6 @@ async function listIssues(args: string[], ctx?: RepoContext): Promise<string> {
   const confidential = takeBoolFlag(args, "--confidential");
   const perPage = takeFlag(args, "--per-page") ?? "20";
 
-  const baseJsonFields = "iid,title,state,author,created_at";
-  const jsonFields =
-    extraJsonKeys.length > 0
-      ? baseJsonFields + "," + extraJsonKeys.join(",")
-      : baseJsonFields;
   const ghArgs = ["issue", "list", "--output", "json", "--per-page", perPage];
   if (state) ghArgs.push("--state", state);
   if (label) ghArgs.push("--label", label);
@@ -192,9 +184,6 @@ async function viewIssue(args: string[], ctx?: RepoContext): Promise<string> {
   const withNotes = hasFlag(args, "--comments");
   const full = hasFlag(args, "--full");
 
-  const fields =
-    "iid,title,state,author,created_at,description,labels,assignees,milestone" +
-    (withNotes ? ",notes" : "");
   const ghArgs = ["issue", "view", String(num), "--output", "json"];
 
   const item = await glabJson<Record<string, unknown>>(ghArgs, ctx);
@@ -289,13 +278,7 @@ async function editIssue(args: string[], ctx?: RepoContext): Promise<string> {
   }
 
   const item = await glabJson<Record<string, unknown>>(
-    [
-      "issue",
-      "view",
-      String(num),
-      "--output",
-      "json",
-    ],
+    ["issue", "view", String(num), "--output", "json"],
     ctx,
   );
 

@@ -55,10 +55,7 @@ const listSchema: FieldDef[] = [
 async function viewProject(args: string[], ctx?: RepoContext): Promise<string> {
   const ghArgs = ["project", "view"];
   if (ctx) ghArgs.push(ctx.nwo);
-  ghArgs.push(
-    "--output",
-    "json",
-  );
+  ghArgs.push("--output", "json");
   const project = await glabJson<Record<string, unknown>>(ghArgs);
 
   return renderOutput([renderDetail("project", project, viewSchema)]);
@@ -69,14 +66,7 @@ async function listProjects(
   ctx?: RepoContext,
 ): Promise<string> {
   const perPage = getFlag(args, "--per-page") ?? "20";
-  const ghArgs = [
-    "project",
-    "list",
-    "--output",
-    "json",
-    "--per-page",
-    perPage,
-  ];
+  const ghArgs = ["project", "list", "--output", "json", "--per-page", perPage];
   const visibility = getFlag(args, "--visibility");
   if (visibility) ghArgs.push("--visibility", visibility);
   const search = getFlag(args, "--search");

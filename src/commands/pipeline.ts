@@ -98,13 +98,7 @@ async function viewPipeline(
     );
 
   const pipeline = await glabJson<Record<string, unknown>>(
-    [
-      "pipeline",
-      "view",
-      id,
-      "--output",
-      "json",
-    ],
+    ["pipeline", "view", id, "--output", "json"],
     ctx,
   );
 
