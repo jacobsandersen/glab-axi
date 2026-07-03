@@ -50,7 +50,7 @@ const table: SuggestionEntry[] = [
     lines: (c) => [
       `Run \`glab-axi${repoFlag(c)} issue note ${c.id} --body-file <path>\` to comment`,
       `Run \`glab-axi${repoFlag(c)} issue close ${c.id}\` to close`,
-      `Run \`glab-axi${repoFlag(c)} issue edit ${c.id} --add-label <label>\` to label`,
+      `Run \`glab-axi${repoFlag(c)} issue update ${c.id} --label <label>\` to label`,
     ],
   },
   {

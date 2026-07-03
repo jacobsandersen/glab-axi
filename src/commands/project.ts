@@ -22,7 +22,7 @@ export const PROJECT_HELP = `usage: glab-axi project <subcommand> [flags]
 subcommands[4]:
   view, list, create <name>, fork <project>
 flags{create}:
-  --public, --private, --internal, --description, --clone
+  --public, --private, --internal, --description
 flags{fork}:
   --clone
 flags{list}:
@@ -110,7 +110,6 @@ async function createProject(
   else if (hasFlag(args, "--internal")) ghArgs.push("--internal");
   const description = getFlag(args, "--description");
   if (description) ghArgs.push("--description", description);
-  if (hasFlag(args, "--clone")) ghArgs.push("--clone");
 
   await glabExec(ghArgs);
   return renderOutput([

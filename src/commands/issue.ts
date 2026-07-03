@@ -57,7 +57,7 @@ flags{view}:
 flags{create}:
   --title <text> (required), --description <text> or --body-file <path>, --label <name> (repeatable), --assignee <username>, --milestone <name>, --confidential
 flags{edit}:
-  --title, --description <text> or --body-file <path>, --add-label, --remove-label, --add-assignee, --remove-assignee, --milestone
+  --title, --description <text> or --body-file <path>, --label, --unlabel, --assignee (+add/!remove), --milestone
 flags{note}:
   --body <text> or --body-file <path> (required)
 examples:
@@ -150,7 +150,8 @@ async function listIssues(args: string[], ctx?: RepoContext): Promise<string> {
   const perPage = takeFlag(args, "--per-page") ?? "20";
 
   const ghArgs = ["issue", "list", "--output", "json", "--per-page", perPage];
-  if (state) ghArgs.push("--state", state);
+  if (state === "closed") ghArgs.push("-c");
+  else if (state === "all") ghArgs.push("-A");
   if (label) ghArgs.push("--label", label);
   if (assignee) ghArgs.push("--assignee", assignee);
   if (author) ghArgs.push("--author", author);
@@ -258,19 +259,23 @@ async function editIssue(args: string[], ctx?: RepoContext): Promise<string> {
     fileFlags: ["--body-file"],
     label: "description",
   });
-  const addLabel = getFlag(args, "--add-label");
-  const removeLabel = getFlag(args, "--remove-label");
-  const addAssignee = getFlag(args, "--add-assignee");
-  const removeAssignee = getFlag(args, "--remove-assignee");
+  const addLabel = getFlag(args, "--label");
+  const removeLabel = getFlag(args, "--unlabel");
+  const addAssignee = getFlag(args, "--assignee")?.startsWith("+")
+    ? getFlag(args, "--assignee")!.slice(1)
+    : undefined;
+  const removeAssignee = getFlag(args, "--assignee")?.startsWith("!")
+    ? getFlag(args, "--assignee")!.slice(1)
+    : undefined;
   const milestone = getFlag(args, "--milestone");
 
-  const ghArgs = ["issue", "edit", String(num)];
+  const ghArgs = ["issue", "update", String(num)];
   if (title) ghArgs.push("--title", title);
   if (description !== undefined) ghArgs.push("--description", description);
-  if (addLabel) ghArgs.push("--add-label", addLabel);
-  if (removeLabel) ghArgs.push("--remove-label", removeLabel);
-  if (addAssignee) ghArgs.push("--add-assignee", addAssignee);
-  if (removeAssignee) ghArgs.push("--remove-assignee", removeAssignee);
+  if (addLabel) ghArgs.push("--label", addLabel);
+  if (removeLabel) ghArgs.push("--unlabel", removeLabel);
+  if (addAssignee) ghArgs.push("--assignee", `+${addAssignee}`);
+  if (removeAssignee) ghArgs.push("--assignee", `!${removeAssignee}`);
   if (milestone) ghArgs.push("--milestone", milestone);
 
   if (ghArgs.length > 3) {
