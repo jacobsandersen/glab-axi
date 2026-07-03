@@ -34,7 +34,13 @@ describe("gh-to-glab flag compatibility", () => {
       await issueCommand(["edit", "1", "--title", "New title"]);
 
       expect(glabExecMock).toHaveBeenCalledWith(
-        expect.arrayContaining(["issue", "update", "1", "--title", "New title"]),
+        expect.arrayContaining([
+          "issue",
+          "update",
+          "1",
+          "--title",
+          "New title",
+        ]),
         undefined,
       );
     });

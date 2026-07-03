@@ -5,7 +5,13 @@ import { AxiError } from "../errors.js";
 import { takeBody, truncateBody } from "../body.js";
 import { formatCountLine } from "../format.js";
 import { getSuggestions } from "../suggestions.js";
-import { takeFlag, takeBoolFlag, takeNumber, getAllFlags, getFlag } from "../args.js";
+import {
+  takeFlag,
+  takeBoolFlag,
+  takeNumber,
+  getAllFlags,
+  getFlag,
+} from "../args.js";
 import { parseFields, type ExtraFieldSpec } from "../fields.js";
 import {
   field,
@@ -138,14 +144,7 @@ async function mrList(args: string[], ctx?: RepoContext): Promise<string> {
   const targetBranch = takeFlag(args, "--target-branch");
   const perPage = takeFlag(args, "--per-page") ?? "20";
 
-  const ghArgs = [
-    "mr",
-    "list",
-    "--output",
-    "json",
-    "--per-page",
-    perPage,
-  ];
+  const ghArgs = ["mr", "list", "--output", "json", "--per-page", perPage];
   if (state === "closed") ghArgs.push("-c");
   else if (state === "merged") ghArgs.push("-M");
   else if (state === "all") ghArgs.push("-A");
@@ -277,8 +276,12 @@ async function mrEdit(args: string[], ctx?: RepoContext): Promise<string> {
   const addLabel = takeFlag(args, "--label");
   const removeLabel = takeFlag(args, "--unlabel");
   const assigneeVal = getFlag(args, "--assignee");
-  const addAssignee = assigneeVal?.startsWith("+") ? assigneeVal.slice(1) : undefined;
-  const removeAssignee = assigneeVal?.startsWith("!") ? assigneeVal.slice(1) : undefined;
+  const addAssignee = assigneeVal?.startsWith("+")
+    ? assigneeVal.slice(1)
+    : undefined;
+  const removeAssignee = assigneeVal?.startsWith("!")
+    ? assigneeVal.slice(1)
+    : undefined;
   const milestone = takeFlag(args, "--milestone");
 
   const ghArgs = ["mr", "update", String(num)];

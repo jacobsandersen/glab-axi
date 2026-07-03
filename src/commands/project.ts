@@ -66,14 +66,7 @@ async function listProjects(
   ctx?: RepoContext,
 ): Promise<string> {
   const perPage = getFlag(args, "--per-page") ?? "20";
-  const ghArgs = [
-    "project",
-    "list",
-    "--output",
-    "json",
-    "--per-page",
-    perPage,
-  ];
+  const ghArgs = ["project", "list", "--output", "json", "--per-page", perPage];
   const visibility = getFlag(args, "--visibility");
   if (visibility) ghArgs.push("--visibility", visibility);
   const search = getFlag(args, "--search");
