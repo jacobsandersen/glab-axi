@@ -74,6 +74,23 @@ Agent  ──▶  glab-axi  ──▶  glab  ──▶  GitLab API
               └── Contextual next-step hints
 ```
 
+## Error handling
+
+glab-axi maps raw `glab` stderr into structured error codes with actionable suggestions:
+
+| Code              | Meaning                                     | Suggestion                                      |
+| ----------------- | ------------------------------------------- | ----------------------------------------------- |
+| `AUTH_REQUIRED`   | Missing or expired GitLab token             | Run `glab auth login`                           |
+| `REPO_NOT_FOUND`  | No GitLab remote or project doesn't exist   | Check `git remote -v` or use `-R owner/name`    |
+| `NOT_FOUND`       | Resource (issue, MR, pipeline, etc.) missing | Verify the ID or list available resources       |
+| `FORBIDDEN`       | Insufficient permissions (HTTP 403)         | Check project access rights                     |
+| `RATE_LIMITED`    | GitLab rate limit hit (HTTP 429)            | Wait and retry                                  |
+| `VALIDATION_ERROR`| Bad input or unknown flag                   | Check command arguments                         |
+| `GLAB_NOT_INSTALLED` | `glab` CLI not found                     | Install `glab`: https://gitlab.com/gitlab-org/cli |
+| `UNKNOWN`         | Unrecognized error                          | See the error message for details               |
+
+Every error response includes a `help:` block with the next step to take.
+
 ## Tips
 
 - **Output is TOON-encoded** — compact and token-efficient. Pipe through `grep`/`head` only when a list is very long.
