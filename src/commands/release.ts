@@ -69,14 +69,7 @@ async function listReleases(
   ctx?: RepoContext,
 ): Promise<string> {
   const perPage = getFlag(args, "--per-page") ?? "20";
-  const ghArgs = [
-    "release",
-    "list",
-    "--json",
-    "tag_name,name,created_at",
-    "--per-page",
-    perPage,
-  ];
+  const ghArgs = ["release", "list", "--output", "json", "--per-page", perPage];
 
   const releases = await glabJson<Record<string, unknown>[]>(ghArgs, ctx);
   const isEmpty = releases.length === 0;
@@ -109,7 +102,7 @@ async function viewRelease(args: string[], ctx?: RepoContext): Promise<string> {
     );
 
   const release = await glabJson<Record<string, unknown>>(
-    ["release", "view", tag, "--json", "tag_name,name,created_at,description"],
+    ["release", "view", tag, "--output", "json"],
     ctx,
   );
 

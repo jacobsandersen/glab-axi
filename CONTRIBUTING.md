@@ -18,6 +18,7 @@ npm test            # Run tests with vitest
 - `src/toon.ts` — [TOON](https://toonformat.dev) rendering helpers
 - `src/errors.ts` — maps glab errors to structured `AxiError`
 - `src/commands/` — one file per command group
+- `test/errors.test.ts` — error pattern matching tests
 
 ## Pull Requests
 

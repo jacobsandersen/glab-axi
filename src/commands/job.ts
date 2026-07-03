@@ -51,14 +51,7 @@ async function listJobs(args: string[], ctx?: RepoContext): Promise<string> {
   const pipeline = getFlag(args, "--pipeline");
   const perPage = getFlag(args, "--per-page") ?? "20";
 
-  const ghArgs = [
-    "job",
-    "list",
-    "--json",
-    "id,name,status,created_at,stage",
-    "--per-page",
-    perPage,
-  ];
+  const ghArgs = ["job", "list", "--output", "json", "--per-page", perPage];
   if (pipeline) ghArgs.push("--pipeline", pipeline);
 
   const jobs = await glabJson<Record<string, unknown>[]>(ghArgs, ctx);
@@ -88,13 +81,7 @@ async function viewJob(args: string[], ctx?: RepoContext): Promise<string> {
     );
 
   const job = await glabJson<Record<string, unknown>>(
-    [
-      "job",
-      "view",
-      id,
-      "--json",
-      "id,name,status,stage,ref,created_at,started_at,web_url",
-    ],
+    ["job", "view", id, "--output", "json"],
     ctx,
   );
 

@@ -60,8 +60,6 @@ const listSchema: FieldDef[] = [
   mapEnum("merge_status", MERGE_STATUS_MAP, "unknown", "merge_status"),
 ];
 
-const LIST_JSON_FIELDS = "iid,title,state,author,merge_status";
-
 const MR_LIST_EXTRA_FIELDS: Record<string, ExtraFieldSpec> = {
   description: { jsonKey: "description", def: field("description") },
   created_at: {
@@ -131,10 +129,7 @@ examples:
 
 async function mrList(args: string[], ctx?: RepoContext): Promise<string> {
   const fieldsArg = takeFlag(args, "--fields");
-  const { extraDefs, extraJsonKeys } = parseFields(
-    fieldsArg,
-    MR_LIST_EXTRA_FIELDS,
-  );
+  const { extraDefs } = parseFields(fieldsArg, MR_LIST_EXTRA_FIELDS);
   const state = takeFlag(args, "--state") ?? "opened";
   const label = takeFlag(args, "--label");
   const assignee = takeFlag(args, "--assignee");
@@ -143,15 +138,11 @@ async function mrList(args: string[], ctx?: RepoContext): Promise<string> {
   const targetBranch = takeFlag(args, "--target-branch");
   const perPage = takeFlag(args, "--per-page") ?? "20";
 
-  const jsonFields =
-    extraJsonKeys.length > 0
-      ? LIST_JSON_FIELDS + "," + extraJsonKeys.join(",")
-      : LIST_JSON_FIELDS;
   const ghArgs = [
     "mr",
     "list",
-    "--json",
-    jsonFields,
+    "--output",
+    "json",
     "--state",
     state,
     "--per-page",
@@ -185,11 +176,8 @@ async function mrView(args: string[], ctx?: RepoContext): Promise<string> {
   const full = takeBoolFlag(args, "--full");
   const num = takeNumber(args, "MR");
 
-  const fields =
-    "iid,title,state,author,merge_status,description,labels,assignees,milestone,merge_error,merge_status,pipelines" +
-    (includeNotes ? ",notes" : "");
   const mr = await glabJson<MrItem>(
-    ["mr", "view", String(num), "--json", fields],
+    ["mr", "view", String(num), "--output", "json"],
     ctx,
   );
 
@@ -316,7 +304,7 @@ async function mrClose(args: string[], ctx?: RepoContext): Promise<string> {
   const num = takeNumber(args, "MR");
 
   const mr = await glabJson<Pick<MrItem, "state">>(
-    ["mr", "view", String(num), "--json", "state"],
+    ["mr", "view", String(num), "--output", "json"],
     ctx,
   );
   const state = (mr.state ?? "").toUpperCase();
@@ -349,7 +337,7 @@ async function mrReopen(args: string[], ctx?: RepoContext): Promise<string> {
   const num = takeNumber(args, "MR");
 
   const mr = await glabJson<Pick<MrItem, "state">>(
-    ["mr", "view", String(num), "--json", "state"],
+    ["mr", "view", String(num), "--output", "json"],
     ctx,
   );
   if ((mr.state ?? "").toUpperCase() === "OPENED") {

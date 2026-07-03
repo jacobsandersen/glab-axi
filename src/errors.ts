@@ -61,6 +61,31 @@ const patterns: ErrorPattern[] = [
     suggestions: () => [`Run \`glab-axi job list\` to see recent jobs`],
   },
   {
+    pattern: /Unauthenticated/i,
+    code: "AUTH_REQUIRED",
+    message: () => "GitLab auth required — run `glab auth login` first",
+  },
+  {
+    pattern: /not a git repository/i,
+    code: "REPO_NOT_FOUND",
+    message: () =>
+      "Not a git repository — run this inside a Git repo with a GitLab remote",
+    suggestions: () => ["Run `git remote -v` to check your remotes"],
+  },
+  {
+    pattern: /None of the git remotes/i,
+    code: "AUTH_REQUIRED",
+    message: (_m, stderr) => {
+      const hostMatch = stderr.match(/Configured remotes:\s*(.+)/i);
+      const host = hostMatch ? hostMatch[1].trim() : "unknown";
+      return `No GitLab remote found — this repo points to ${host}, not GitLab`;
+    },
+    suggestions: () => [
+      "Run `glab auth login` to add a GitLab host",
+      "Or use `-R owner/name` to target a project directly",
+    ],
+  },
+  {
     pattern: /glab auth login/i,
     code: "AUTH_REQUIRED",
     message: () => "GitLab auth required — run `glab auth login` first",
@@ -71,6 +96,11 @@ const patterns: ErrorPattern[] = [
     message: () => "Insufficient permissions for this action",
   },
   {
+    pattern: /HTTP 429/,
+    code: "RATE_LIMITED",
+    message: () => "Rate limited by GitLab — wait and retry",
+  },
+  {
     pattern: /HTTP 422/,
     code: "VALIDATION_ERROR",
     message: (_m, stderr) => {
@@ -78,10 +108,27 @@ const patterns: ErrorPattern[] = [
       return msgMatch ? msgMatch[1] : "Validation error";
     },
   },
+  {
+    pattern: /Unknown flag/i,
+    code: "VALIDATION_ERROR",
+    message: (m, stderr) => firstErrorLine(stderr),
+  },
+  {
+    pattern: /404 Not Found/i,
+    code: "NOT_FOUND",
+    message: () => "Not found — check the project or resource exists",
+  },
 ];
 
 function firstErrorLine(stderr: string): string {
-  return stderr.trim().split("\n")[0] ?? "";
+  const lines = stderr
+    .split("\n")
+    .map((l) => l.trim())
+    .filter((l) => l.length > 0);
+  for (const line of lines) {
+    if (line.toLowerCase() !== "error") return line;
+  }
+  return lines[0] ?? "";
 }
 
 export function mapGlabError(stderr: string, exitCode: number): AxiError {

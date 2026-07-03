@@ -55,8 +55,8 @@ async function listPipelines(
   const ghArgs = [
     "pipeline",
     "list",
-    "--json",
-    "id,status,ref,created_at,sha",
+    "--output",
+    "json",
     "--per-page",
     perPage,
   ];
@@ -98,13 +98,7 @@ async function viewPipeline(
     );
 
   const pipeline = await glabJson<Record<string, unknown>>(
-    [
-      "pipeline",
-      "view",
-      id,
-      "--json",
-      "id,status,ref,sha,created_at,updated_at,web_url",
-    ],
+    ["pipeline", "view", id, "--output", "json"],
     ctx,
   );
 

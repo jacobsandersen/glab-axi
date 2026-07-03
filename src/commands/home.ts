@@ -44,18 +44,11 @@ export async function homeCommand(
 ): Promise<string> {
   const [issues, mrs] = await Promise.all([
     glabJson<Record<string, unknown>[]>(
-      ["issue", "list", "--json", "iid,title,state,author", "--per-page", "3"],
+      ["issue", "list", "--output", "json", "--per-page", "3"],
       ctx,
     ).catch(() => [] as Record<string, unknown>[]),
     glabJson<Record<string, unknown>[]>(
-      [
-        "mr",
-        "list",
-        "--json",
-        "iid,title,author,merge_status",
-        "--per-page",
-        "3",
-      ],
+      ["mr", "list", "--output", "json", "--per-page", "3"],
       ctx,
     ).catch(() => [] as Record<string, unknown>[]),
   ]);
