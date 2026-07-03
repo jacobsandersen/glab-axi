@@ -72,6 +72,18 @@ npm run dev               # Run CLI directly with tsx
 npm test                  # Run tests with vitest
 ```
 
+## Release
+
+Publishing to npm is automated via GitHub Actions. Creating a GitHub Release (or triggering the workflow manually) runs CI, builds, tests, and publishes to npm.
+
+```sh
+npm version patch   # or minor / major — bumps version and creates a git tag
+git push --follow-tags
+# then create a GitHub Release for the new tag
+```
+
+The `NPM_TOKEN` secret must be configured in the repository's GitHub Actions secrets.
+
 ## License
 
 MIT
