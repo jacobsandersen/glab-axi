@@ -22,15 +22,14 @@ export const PROJECT_HELP = `usage: glab-axi project <subcommand> [flags]
 subcommands[4]:
   view, list, create <name>, fork <project>
 flags{create}:
-  --public, --private, --internal, --description, --clone
+  --public, --private, --internal, --description
 flags{fork}:
   --clone
 flags{list}:
-  --per-page <n> (default 20), --visibility, --search
+  --per-page <n> (default 20)
 examples:
   glab-axi project view
-  glab-axi project create my-project --public --description "A new project"
-  glab-axi project list --visibility public`;
+  glab-axi project create my-project --public --description "A new project"`;
 
 const viewSchema: FieldDef[] = [
   field("path_with_namespace", "path"),
@@ -66,7 +65,14 @@ async function listProjects(
   ctx?: RepoContext,
 ): Promise<string> {
   const perPage = getFlag(args, "--per-page") ?? "20";
-  const ghArgs = ["project", "list", "--output", "json", "--per-page", perPage];
+  const ghArgs = [
+    "project",
+    "list",
+    "--output",
+    "json",
+    "--per-page",
+    perPage,
+  ];
   const visibility = getFlag(args, "--visibility");
   if (visibility) ghArgs.push("--visibility", visibility);
   const search = getFlag(args, "--search");
@@ -110,7 +116,6 @@ async function createProject(
   else if (hasFlag(args, "--internal")) ghArgs.push("--internal");
   const description = getFlag(args, "--description");
   if (description) ghArgs.push("--description", description);
-  if (hasFlag(args, "--clone")) ghArgs.push("--clone");
 
   await glabExec(ghArgs);
   return renderOutput([

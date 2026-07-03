@@ -115,7 +115,7 @@ flags{view}:
 flags{create}:
   --title <text> (required), --description <text> or --body-file <path>, --source-branch, --target-branch, --draft, --label <name> (repeatable), --assignee <username>, --milestone
 flags{edit}:
-  --title <text>, --description <text> or --body-file <path>, --add-label, --remove-label, --add-assignee, --remove-assignee, --milestone
+  --title <text>, --description <text> or --body-file <path>, --label, --unlabel, --assignee (+add/!remove), --milestone
 flags{merge}:
   --squash
 flags{note}:
@@ -143,11 +143,12 @@ async function mrList(args: string[], ctx?: RepoContext): Promise<string> {
     "list",
     "--output",
     "json",
-    "--state",
-    state,
     "--per-page",
     perPage,
   ];
+  if (state === "closed") ghArgs.push("-c");
+  else if (state === "merged") ghArgs.push("-M");
+  else if (state === "all") ghArgs.push("-A");
   if (label) ghArgs.push("--label", label);
   if (assignee) ghArgs.push("--assignee", assignee);
   if (author) ghArgs.push("--author", author);
@@ -273,19 +274,23 @@ async function mrEdit(args: string[], ctx?: RepoContext): Promise<string> {
     fileFlags: ["--body-file"],
     label: "description",
   });
-  const addLabel = takeFlag(args, "--add-label");
-  const removeLabel = takeFlag(args, "--remove-label");
-  const addAssignee = takeFlag(args, "--add-assignee");
-  const removeAssignee = takeFlag(args, "--remove-assignee");
+  const addLabel = takeFlag(args, "--label");
+  const removeLabel = takeFlag(args, "--unlabel");
+  const addAssignee = takeFlag(args, "--assignee")?.startsWith("+")
+    ? takeFlag(args, "--assignee")!.slice(1)
+    : undefined;
+  const removeAssignee = takeFlag(args, "--assignee")?.startsWith("!")
+    ? takeFlag(args, "--assignee")!.slice(1)
+    : undefined;
   const milestone = takeFlag(args, "--milestone");
 
-  const ghArgs = ["mr", "edit", String(num)];
+  const ghArgs = ["mr", "update", String(num)];
   if (title) ghArgs.push("--title", title);
   if (description !== undefined) ghArgs.push("--description", description);
-  if (addLabel) ghArgs.push("--add-label", addLabel);
-  if (removeLabel) ghArgs.push("--remove-label", removeLabel);
-  if (addAssignee) ghArgs.push("--add-assignee", addAssignee);
-  if (removeAssignee) ghArgs.push("--remove-assignee", removeAssignee);
+  if (addLabel) ghArgs.push("--label", addLabel);
+  if (removeLabel) ghArgs.push("--unlabel", removeLabel);
+  if (addAssignee) ghArgs.push("--assignee", `+${addAssignee}`);
+  if (removeAssignee) ghArgs.push("--assignee", `!${removeAssignee}`);
   if (milestone) ghArgs.push("--milestone", milestone);
 
   await glabExec(ghArgs, ctx);
