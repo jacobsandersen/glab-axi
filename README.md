@@ -4,32 +4,82 @@ GitLab CLI for agents — designed with [AXI](https://github.com/kunchenguid/axi
 
 Wraps the official [`glab`](https://gitlab.com/gitlab-org/cli) CLI with token-efficient [TOON](https://toonformat.dev) output, contextual next-step suggestions, and structured error handling. Built for autonomous agents that interact with GitLab via shell execution.
 
-## Quick Start
+If you're an AI coding agent (Claude Code, Codex, OpenCode, etc.) working with GitLab, glab-axi gives you a clean, structured interface to issues, merge requests, pipelines, jobs, and more — no JSON parsing, no interactive prompts, just token-efficient output with actionable next-step hints.
+
+## Hit the ground running
+
+**Prerequisites:**
+
+1. [Node.js](https://nodejs.org/) 20+
+2. [`glab`](https://gitlab.com/gitlab-org/cli) CLI installed and authenticated:
+   ```sh
+   glab auth login
+   ```
+3. Be inside a Git repository with a GitLab remote (so glab-axi can detect the project)
+
+**Try it:**
 
 ```sh
-npx -y @jacobsandersen/glab-axi                     # dashboard - live state, no args needed
+npx -y @jacobsandersen/glab-axi          # dashboard — open issues, MRs, next steps
+```
+
+That's it. No install needed — npx fetches it on demand.
+
+**Common first commands:**
+
+```sh
 npx -y @jacobsandersen/glab-axi issue list          # list issues in current project
 npx -y @jacobsandersen/glab-axi mr view 42          # view merge request #42
 npx -y @jacobsandersen/glab-axi pipeline list       # list CI/CD pipelines
 npx -y @jacobsandersen/glab-axi job log 12345       # view job logs
+npx -y @jacobsandersen/glab-axi search issues "bug" # search issues
 ```
 
-Requires [`glab`](https://gitlab.com/gitlab-org/cli) installed and authenticated (`glab auth login`). Node 20+ required.
+Every response ends with a `help:` block suggesting what to do next — follow those hints.
 
-### Session hook
+**Target a different project:**
 
-Install ambient context hooks:
+```sh
+npx -y @jacobsandersen/glab-axi issue list --repo owner/name
+```
+
+## Session hooks (ambient context)
+
+By default, you invoke glab-axi on demand. But if you want your agent to **automatically see GitLab state** (open issues, merge requests) every time a session starts — without being asked — install the session hooks:
 
 ```sh
 npm install -g @jacobsandersen/glab-axi
 glab-axi setup hooks
 ```
 
+This installs `SessionStart` hooks into your agent (Claude Code, Codex, or OpenCode). On each new session, glab-axi runs automatically and injects a summary of your project's open issues and MRs into the agent's context. Restart your agent session after installing.
+
+This is optional but recommended — it means your agent already knows about open issues and in-flight MRs before you ask anything.
+
 ## Built with
 
 - [`axi-sdk-js`](https://github.com/kunchenguid/axi) — shared AXI runtime (command dispatch, structured errors, hook installation, self-update)
 - [`@toon-format/toon`](https://toonformat.dev) — Token-Oriented Object Notation for ~40% fewer tokens than JSON
 - [`glab`](https://gitlab.com/gitlab-org/cli) — the official GitLab CLI, used under the hood
+
+## How it works
+
+glab-axi spawns `glab` under the hood, parses its JSON output, and re-encodes it as [TOON](https://toonformat.dev) — a compact format that uses ~40% fewer tokens than JSON while remaining human-readable. Every response includes structured error handling and a `help:` block with contextual next-step suggestions, so agents can chain operations without guessing.
+
+```
+Agent  ──▶  glab-axi  ──▶  glab  ──▶  GitLab API
+              │
+              ├── TOON-encoded output (token-efficient)
+              ├── Structured errors (no interactive prompts)
+              └── Contextual next-step hints
+```
+
+## Tips
+
+- **Output is TOON-encoded** — compact and token-efficient. Pipe through `grep`/`head` only when a list is very long.
+- **Mutations are idempotent** — re-running a failed `issue create` or `mr create` is safe; it reports what changed.
+- **Multi-line bodies** — write the text to a UTF-8 file and pass `--body-file <path>` instead of escaping shell quotes.
+- **Raw API** — use `api` for anything the dedicated commands don't cover, e.g. `npx -y @jacobsandersen/glab-axi api projects/{id}/variables`.
 
 ## Commands
 
