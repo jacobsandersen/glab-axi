@@ -37,7 +37,7 @@ async function listVariables(
   ctx?: RepoContext,
 ): Promise<string> {
   const variables = await glabJson<Record<string, unknown>[]>(
-    ["variable", "list", "--json", "key,value,updated_at"],
+    ["variable", "list", "--output", "json"],
     ctx,
   );
   const isEmpty = variables.length === 0;

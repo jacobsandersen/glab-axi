@@ -72,8 +72,8 @@ async function listReleases(
   const ghArgs = [
     "release",
     "list",
-    "--json",
-    "tag_name,name,created_at",
+    "--output",
+    "json",
     "--per-page",
     perPage,
   ];
@@ -109,7 +109,7 @@ async function viewRelease(args: string[], ctx?: RepoContext): Promise<string> {
     );
 
   const release = await glabJson<Record<string, unknown>>(
-    ["release", "view", tag, "--json", "tag_name,name,created_at,description"],
+    ["release", "view", tag, "--output", "json"],
     ctx,
   );
 

@@ -150,8 +150,8 @@ async function mrList(args: string[], ctx?: RepoContext): Promise<string> {
   const ghArgs = [
     "mr",
     "list",
-    "--json",
-    jsonFields,
+    "--output",
+    "json",
     "--state",
     state,
     "--per-page",
@@ -189,7 +189,7 @@ async function mrView(args: string[], ctx?: RepoContext): Promise<string> {
     "iid,title,state,author,merge_status,description,labels,assignees,milestone,merge_error,merge_status,pipelines" +
     (includeNotes ? ",notes" : "");
   const mr = await glabJson<MrItem>(
-    ["mr", "view", String(num), "--json", fields],
+    ["mr", "view", String(num), "--output", "json"],
     ctx,
   );
 
@@ -316,7 +316,7 @@ async function mrClose(args: string[], ctx?: RepoContext): Promise<string> {
   const num = takeNumber(args, "MR");
 
   const mr = await glabJson<Pick<MrItem, "state">>(
-    ["mr", "view", String(num), "--json", "state"],
+    ["mr", "view", String(num), "--output", "json"],
     ctx,
   );
   const state = (mr.state ?? "").toUpperCase();
@@ -349,7 +349,7 @@ async function mrReopen(args: string[], ctx?: RepoContext): Promise<string> {
   const num = takeNumber(args, "MR");
 
   const mr = await glabJson<Pick<MrItem, "state">>(
-    ["mr", "view", String(num), "--json", "state"],
+    ["mr", "view", String(num), "--output", "json"],
     ctx,
   );
   if ((mr.state ?? "").toUpperCase() === "OPENED") {

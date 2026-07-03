@@ -54,8 +54,8 @@ async function listJobs(args: string[], ctx?: RepoContext): Promise<string> {
   const ghArgs = [
     "job",
     "list",
-    "--json",
-    "id,name,status,created_at,stage",
+    "--output",
+    "json",
     "--per-page",
     perPage,
   ];
@@ -92,8 +92,8 @@ async function viewJob(args: string[], ctx?: RepoContext): Promise<string> {
       "job",
       "view",
       id,
-      "--json",
-      "id,name,status,stage,ref,created_at,started_at,web_url",
+      "--output",
+      "json",
     ],
     ctx,
   );

@@ -32,7 +32,7 @@ const listSchema: FieldDef[] = [field("name")];
 
 async function listLabels(args: string[], ctx?: RepoContext): Promise<string> {
   const perPage = getFlag(args, "--per-page") ?? "50";
-  const ghArgs = ["label", "list", "--json", "name", "--per-page", perPage];
+  const ghArgs = ["label", "list", "--output", "json", "--per-page", perPage];
 
   const labels = await glabJson<Record<string, unknown>[]>(ghArgs, ctx);
   const isEmpty = labels.length === 0;
@@ -67,7 +67,7 @@ async function createLabel(args: string[], ctx?: RepoContext): Promise<string> {
     );
 
   const existing = await glabJson<Record<string, unknown>[]>(
-    ["label", "list", "--json", "name"],
+    ["label", "list", "--output", "json"],
     ctx,
   );
   const found = existing.find(

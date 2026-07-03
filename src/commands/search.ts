@@ -128,8 +128,8 @@ async function searchIssues(
     "search",
     "issues",
     query,
-    "--json",
-    "iid,title,project,state,author,created_at",
+    "--output",
+    "json",
     "--per-page",
     limit,
   ];
@@ -177,8 +177,8 @@ async function searchMrs(args: string[], ctx?: RepoContext): Promise<string> {
     "search",
     "mrs",
     query,
-    "--json",
-    "iid,title,project,state,author,created_at",
+    "--output",
+    "json",
     "--per-page",
     limit,
   ];
@@ -227,8 +227,8 @@ async function searchProjects(
     "search",
     "projects",
     query,
-    "--json",
-    "path_with_namespace,description,star_count,forks_count,last_activity_at",
+    "--output",
+    "json",
     "--per-page",
     limit,
   ];
@@ -264,8 +264,8 @@ async function searchBlobs(args: string[], ctx?: RepoContext): Promise<string> {
     "search",
     "blobs",
     query,
-    "--json",
-    "filename,ref,project,data",
+    "--output",
+    "json",
     "--per-page",
     limit,
   ];

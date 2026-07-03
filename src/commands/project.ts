@@ -56,8 +56,8 @@ async function viewProject(args: string[], ctx?: RepoContext): Promise<string> {
   const ghArgs = ["project", "view"];
   if (ctx) ghArgs.push(ctx.nwo);
   ghArgs.push(
-    "--json",
-    "path_with_namespace,name,description,visibility,star_count,forks_count,owner,default_branch,last_activity_at",
+    "--output",
+    "json",
   );
   const project = await glabJson<Record<string, unknown>>(ghArgs);
 
@@ -72,8 +72,8 @@ async function listProjects(
   const ghArgs = [
     "project",
     "list",
-    "--json",
-    "path_with_namespace,name,visibility,star_count,last_activity_at",
+    "--output",
+    "json",
     "--per-page",
     perPage,
   ];
