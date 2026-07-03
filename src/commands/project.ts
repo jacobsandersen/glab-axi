@@ -26,11 +26,10 @@ flags{create}:
 flags{fork}:
   --clone
 flags{list}:
-  --per-page <n> (default 20), --visibility, --search
+  --per-page <n> (default 20)
 examples:
   glab-axi project view
-  glab-axi project create my-project --public --description "A new project"
-  glab-axi project list --visibility public`;
+  glab-axi project create my-project --public --description "A new project"`;
 
 const viewSchema: FieldDef[] = [
   field("path_with_namespace", "path"),
