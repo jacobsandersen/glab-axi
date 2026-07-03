@@ -26,3 +26,9 @@ npm test            # Run tests with vitest
 3. Make your changes
 4. Run `npm test`
 5. Submit a PR
+
+CI runs automatically on push and pull requests (build + test on Node 20 and 22).
+
+## Releasing
+
+Publishing is handled by a GitHub Actions workflow (`.github/workflows/publish.yml`). It triggers on GitHub Release publish or manual dispatch, then runs CI, builds, tests, and publishes to npm. Requires a `NPM_TOKEN` repository secret.
