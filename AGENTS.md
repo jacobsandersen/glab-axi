@@ -5,12 +5,12 @@ Agent ergonomic wrapper around [GitLab CLI](https://gitlab.com/gitlab-org/cli) (
 ## Quick Start
 
 ```sh
-npx -y glab-axi                     # dashboard
-npx -y glab-axi issue list          # list issues
-npx -y glab-axi mr view 42          # view merge request #42
-npx -y glab-axi pipeline list       # list pipelines
-npx -y glab-axi job log 12345       # view job logs
-npx -y glab-axi search issues "bug" # search issues
+npx -y @jacobsandersen/glab-axi                     # dashboard
+npx -y @jacobsandersen/glab-axi issue list          # list issues
+npx -y @jacobsandersen/glab-axi mr view 42          # view merge request #42
+npx -y @jacobsandersen/glab-axi pipeline list       # list pipelines
+npx -y @jacobsandersen/glab-axi job log 12345       # view job logs
+npx -y @jacobsandersen/glab-axi search issues "bug" # search issues
 ```
 
 Requires `glab` CLI installed and authenticated (`glab auth login`).

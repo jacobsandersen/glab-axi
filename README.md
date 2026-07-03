@@ -7,11 +7,11 @@ Wraps the official [`glab`](https://gitlab.com/gitlab-org/cli) CLI with token-ef
 ## Quick Start
 
 ```sh
-npx -y glab-axi                     # dashboard - live state, no args needed
-npx -y glab-axi issue list          # list issues in current project
-npx -y glab-axi mr view 42          # view merge request #42
-npx -y glab-axi pipeline list       # list CI/CD pipelines
-npx -y glab-axi job log 12345       # view job logs
+npx -y @jacobsandersen/glab-axi                     # dashboard - live state, no args needed
+npx -y @jacobsandersen/glab-axi issue list          # list issues in current project
+npx -y @jacobsandersen/glab-axi mr view 42          # view merge request #42
+npx -y @jacobsandersen/glab-axi pipeline list       # list CI/CD pipelines
+npx -y @jacobsandersen/glab-axi job log 12345       # view job logs
 ```
 
 Requires [`glab`](https://gitlab.com/gitlab-org/cli) installed and authenticated (`glab auth login`). Node 20+ required.
@@ -21,7 +21,7 @@ Requires [`glab`](https://gitlab.com/gitlab-org/cli) installed and authenticated
 Install ambient context hooks:
 
 ```sh
-npm install -g glab-axi
+npm install -g @jacobsandersen/glab-axi
 glab-axi setup hooks
 ```
 
