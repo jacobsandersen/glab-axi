@@ -6,7 +6,7 @@
   "type": "module",
   "repository": {
     "type": "git",
-    "url": "https://github.com/jacobsandersen/glab-axi.git"
+    "url": "git+https://github.com/jacobsandersen/glab-axi.git"
   },
   "keywords": [
     "gitlab",
@@ -17,7 +17,7 @@
     "glab"
   ],
   "bin": {
-    "glab-axi": "./dist/bin/glab-axi.js"
+    "glab-axi": "dist/bin/glab-axi.js"
   },
   "files": [
     "dist",
