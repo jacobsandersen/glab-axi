@@ -180,24 +180,43 @@ async function listIssues(args: string[], ctx?: RepoContext): Promise<string> {
   return renderOutput(blocks);
 }
 
+function extractIssueNotes(
+  item: Record<string, unknown>,
+): Record<string, unknown>[] {
+  const raw = item.Notes ?? item.notes;
+  return Array.isArray(raw) ? raw : [];
+}
+
 async function viewIssue(args: string[], ctx?: RepoContext): Promise<string> {
   const num = requireNumber(getPositional(args, 1), "issue");
   const withNotes = hasFlag(args, "--comments");
   const full = hasFlag(args, "--full");
 
   const ghArgs = ["issue", "view", String(num), "--output", "json"];
+  if (withNotes) ghArgs.push("--comments");
 
   const item = await glabJson<Record<string, unknown>>(ghArgs, ctx);
 
-  const schema = full ? viewSchemaFull : viewSchema;
+  const schema = [...(full ? viewSchemaFull : viewSchema)];
+
+  if (!withNotes) {
+    const noteCount =
+      typeof item.user_notes_count === "number" ? item.user_notes_count : 0;
+    schema.push(
+      custom(
+        "note_count",
+        () => `${noteCount} - use --comments to see all notes`,
+      ),
+    );
+  }
 
   const blocks: string[] = [renderDetail("issue", item, schema)];
 
-  if (withNotes && Array.isArray(item.notes)) {
+  if (withNotes) {
     blocks.push(
       renderList(
         "notes",
-        item.notes as Record<string, unknown>[],
+        extractIssueNotes(item),
         noteResultSchema.filter((d) => ("key" in d ? d.key !== "iid" : true)),
       ),
     );

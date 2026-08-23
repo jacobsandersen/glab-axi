@@ -29,6 +29,18 @@ import {
   type FieldDef,
 } from "../toon.js";
 
+interface MrDiscussionNote {
+  author?: { username: string };
+  body?: string;
+  created_at?: string;
+}
+
+interface MrDiscussion {
+  id?: string;
+  individual_note?: boolean;
+  notes?: MrDiscussionNote[];
+}
+
 interface MrItem {
   [key: string]: unknown;
   iid: number;
@@ -43,11 +55,9 @@ interface MrItem {
   diff_refs?: unknown;
   merge_error?: string;
   pipelines?: unknown[];
-  notes?: Array<{
-    author: { username: string };
-    body: string;
-    created_at: string;
-  }>;
+  user_notes_count?: number;
+  Discussions?: MrDiscussion[];
+  discussions?: MrDiscussion[];
 }
 
 const MERGE_STATUS_MAP: Record<string, string> = {
@@ -110,6 +120,23 @@ const viewSchemaFull: FieldDef[] = viewSchema.map((f) =>
       )
     : f,
 );
+
+const noteListSchema: FieldDef[] = [
+  field("author"),
+  relativeTime("created_at", "created"),
+  custom("body", (item) => truncateBody(item.body as string | undefined, 800)),
+];
+
+function flattenDiscussionNotes(
+  mr: MrItem,
+): Array<{ author: string; created_at: string; body: string }> {
+  const discussions = mr.Discussions ?? mr.discussions ?? [];
+  return discussions.flatMap((d) => d.notes ?? []).map((n) => ({
+    author: n.author?.username ?? "unknown",
+    created_at: n.created_at ?? "",
+    body: n.body ?? "",
+  }));
+}
 
 export const MR_HELP = `usage: glab-axi mr <subcommand> [flags]
 subcommands[11]:
@@ -176,43 +203,32 @@ async function mrView(args: string[], ctx?: RepoContext): Promise<string> {
   const full = takeBoolFlag(args, "--full");
   const num = takeNumber(args, "MR");
 
-  const mr = await glabJson<MrItem>(
-    ["mr", "view", String(num), "--output", "json"],
-    ctx,
-  );
+  const ghArgs = ["mr", "view", String(num), "--output", "json"];
+  if (includeNotes) ghArgs.push("--comments");
+
+  const mr = await glabJson<MrItem>(ghArgs, ctx);
 
   const schema = [...(full ? viewSchemaFull : viewSchema)];
 
-  if (includeNotes && Array.isArray(mr.notes)) {
-    schema.push(
-      custom("notes", (item) =>
-        (
-          (item.notes ?? []) as Array<{
-            author?: { username: string };
-            body?: string;
-            created_at?: string;
-          }>
-        ).map((n) => ({
-          author: n.author?.username ?? "unknown",
-          body: n.body ?? "",
-          created: n.created_at ?? "",
-        })),
-      ),
-    );
-  } else {
-    const noteCount = Array.isArray(mr.notes) ? mr.notes.length : 0;
+  if (!includeNotes) {
+    const noteCount = mr.user_notes_count ?? 0;
     schema.push(
       custom(
         "note_count",
-        () => `${noteCount} — use --comments to see full notes`,
+        () => `${noteCount} - use --comments to see all notes`,
       ),
     );
   }
 
   const stateLower = (mr.state ?? "").toLowerCase();
 
-  return renderOutput([
-    renderDetail("merge_request", mr, schema),
+  const blocks = [renderDetail("merge_request", mr, schema)];
+
+  if (includeNotes) {
+    blocks.push(renderList("notes", flattenDiscussionNotes(mr), noteListSchema));
+  }
+
+  blocks.push(
     renderHelp(
       getSuggestions({
         domain: "mr",
@@ -222,7 +238,9 @@ async function mrView(args: string[], ctx?: RepoContext): Promise<string> {
         repo: ctx,
       }),
     ),
-  ]);
+  );
+
+  return renderOutput(blocks);
 }
 
 async function mrCreate(args: string[], ctx?: RepoContext): Promise<string> {
