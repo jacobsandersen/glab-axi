@@ -1,5 +1,11 @@
 # glab-axi
 
+> **ARCHIVED - 2026-09-02.** This project is no longer maintained and is superseded by
+> [karotkriss/glab-axi](https://github.com/karotkriss/glab-axi), the upstream `glab-axi` npm
+> package. This repo was an independent, narrower re-implementation of the same AXI glab
+> wrapper; keeping two parallel projects was not worth it. **Use the upstream package:**
+> `npx -y glab-axi`, or install its agent skill with `npx skills add karotkriss/glab-axi --skill glab-axi -g`.
+
 GitLab CLI for agents — designed with [AXI](https://github.com/kunchenguid/axi) (Agent eXperience Interface).
 
 Wraps the official [`glab`](https://gitlab.com/gitlab-org/cli) CLI with token-efficient [TOON](https://toonformat.dev) output, contextual next-step suggestions, and structured error handling. Built for autonomous agents that interact with GitLab via shell execution.
